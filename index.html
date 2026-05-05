@@ -128,15 +128,23 @@
                 </div>
             </div>
 
+            <!-- คำเตือนอย่างเป็นทางการ -->
             <div class="bg-[#FFF8C4] border border-[#F59E0B] p-4 rounded-xl mb-6 text-left flex gap-3 items-start shadow-sm w-full">
+                <!-- ไอคอนแจ้งเตือนหลัก (สามเหลี่ยม) -->
                 <div class="text-[#92400E] shrink-0 mt-0.5">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                 </div>
                 <div>
                     <h3 class="font-bold text-[#92400E] text-sm mb-1">คำเตือนข้อปฏิบัติ</h3>
                     <p class="text-xs text-[#92400E] leading-relaxed">
-                        ห้ามทำการเปลี่ยนแปลงข้อมูลส่วนตัวของบัญชี และ <b>ห้ามกดรีเซ็ตรหัสผ่านหรือเปลี่ยนรหัสผ่านโดยเด็ดขาด</b>
+                        ห้ามทำการเปลี่ยนแปลงข้อมูลส่วนตัวของบัญชี และ <b>ห้ามกดรีเซ็ตรหัสผ่านหรือเปลี่ยนแปลงรหัสผ่านโดยเด็ดขาด</b>
                     </p>
+                    
+                    <!-- ส่วนข้อความห้ามส่งต่อพร้อมไอคอน -->
+                    <div class="font-bold text-red-600 mt-2 flex items-start gap-1.5">
+                        <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                        <span>ห้ามส่งต่อหรือเผยแพร่รหัสผ่านนี้กับใคร</span>
+                    </div>
                 </div>
             </div>
 
@@ -294,7 +302,7 @@
             loginSec.classList.add('fade-in-up');
         }
 
-        // ฟังก์ชันสร้างลายน้ำพื้นหลัง (ทะลุกรอบ Username/Password)
+        // ฟังก์ชันสร้างลายน้ำพื้นหลัง (แก้ปัญหาลายน้ำขาดตรงมุม)
 function createWatermark(studentName, studentId) {
     // ลบลายน้ำเก่าออกก่อน (ถ้ามี)
     const existingWatermark = document.getElementById('security-watermark');
@@ -308,13 +316,10 @@ function createWatermark(studentName, studentId) {
     targetBox.style.position = 'relative';
     targetBox.style.overflow = 'hidden';
 
-    // ✨ ส่วนที่เพิ่มใหม่: ทำให้กรอบย่อย (Username/Password) โปร่งแสง ✨
-    // ค้นหากล่องพื้นหลังสีเทาอ่อน (.bg-gray-50) ภายในกรอบสีขาว
+    // ทำให้กรอบย่อย (Username/Password) โปร่งแสง
     const innerBoxes = targetBox.querySelectorAll('.bg-gray-50');
     innerBoxes.forEach(box => {
-        // เปลี่ยนพื้นหลังให้เป็นสีขาว/เทาแบบโปร่งแสง 40%
         box.style.backgroundColor = 'rgba(249, 250, 251, 0.4)'; 
-        // (ตัวเลือกเสริม) ใส่เบลอนิดๆ ให้ลายน้ำดูละมุนขึ้นเมื่อมองทะลุกล่อง
         box.style.backdropFilter = 'blur(1px)'; 
     });
 
@@ -324,23 +329,24 @@ function createWatermark(studentName, studentId) {
     
     watermarkDiv.id = 'security-watermark';
     watermarkDiv.style.position = 'absolute';
-    watermarkDiv.style.top = '-20%';     
-    watermarkDiv.style.left = '-20%';
-    watermarkDiv.style.width = '140%';
-    watermarkDiv.style.height = '140%';
+    // ขยายขนาดกล่องให้ใหญ่กว่าเดิมมากเผื่อพื้นที่ตอนหมุน (แก้ลายน้ำแหว่ง)
+    watermarkDiv.style.top = '-50%';     
+    watermarkDiv.style.left = '-50%';
+    watermarkDiv.style.width = '200%';
+    watermarkDiv.style.height = '200%';
     watermarkDiv.style.pointerEvents = 'none'; 
-    // ปรับความเข้มขึ้นนิดนึง (0.06) เพื่อให้เวลาทะลุกล่องโปร่งแสงขึ้นมาแล้วยังพอมองเห็น
     watermarkDiv.style.opacity = '0.06'; 
     watermarkDiv.style.display = 'flex';
     watermarkDiv.style.flexWrap = 'wrap';
-    watermarkDiv.style.alignContent = 'flex-start';
+    watermarkDiv.style.alignContent = 'center';
+    watermarkDiv.style.justifyContent = 'center';
     watermarkDiv.style.transform = 'rotate(-25deg)'; 
     watermarkDiv.style.userSelect = 'none'; 
     
-    // สร้างข้อความวนลูป
+    // เพิ่มจำนวนการสร้างข้อความจาก 50 เป็น 150 ลูปให้กระจายเต็มพื้นที่ใหญ่ๆ
     let content = '';
-    for (let i = 0; i < 50; i++) { 
-        content += `<span style="padding: 10px; font-size: 14px; font-weight: bold; white-space: nowrap;">${watermarkText}</span>`;
+    for (let i = 0; i < 150; i++) { 
+        content += `<span style="padding: 10px 15px; font-size: 14px; font-weight: bold; white-space: nowrap;">${watermarkText}</span>`;
     }
     watermarkDiv.innerHTML = content;
     
