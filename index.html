@@ -256,6 +256,8 @@
                     document.getElementById('display-igname').innerText = data.igName;
                     document.getElementById('display-user').innerText = data.igUser;
                     document.getElementById('display-pass').innerText = data.igPass;
+                    const currentStdId = document.getElementById('studentId').value;
+    createWatermark(data.name, currentStdId);
                 } else {
                     // แสดง Error ใต้ปุ่ม
                     statusDiv.innerText = data.message || 'รหัสนักเรียน หรือ เลขประจำตัวประชาชนไม่ถูกต้อง';
@@ -291,6 +293,68 @@
             void loginSec.offsetWidth;
             loginSec.classList.add('fade-in-up');
         }
+
+        // ฟังก์ชันสร้างลายน้ำพื้นหลัง (ทะลุกรอบ Username/Password)
+function createWatermark(studentName, studentId) {
+    // ลบลายน้ำเก่าออกก่อน (ถ้ามี)
+    const existingWatermark = document.getElementById('security-watermark');
+    if (existingWatermark) existingWatermark.remove();
+
+    // 1. ค้นหากรอบสีขาวในหน้า Dashboard
+    const targetBox = document.querySelector('#dashboard-section .bg-white');
+    if (!targetBox) return;
+
+    // 2. ตั้งค่ากรอบสีขาวให้กักเก็บลายน้ำ
+    targetBox.style.position = 'relative';
+    targetBox.style.overflow = 'hidden';
+
+    // ✨ ส่วนที่เพิ่มใหม่: ทำให้กรอบย่อย (Username/Password) โปร่งแสง ✨
+    // ค้นหากล่องพื้นหลังสีเทาอ่อน (.bg-gray-50) ภายในกรอบสีขาว
+    const innerBoxes = targetBox.querySelectorAll('.bg-gray-50');
+    innerBoxes.forEach(box => {
+        // เปลี่ยนพื้นหลังให้เป็นสีขาว/เทาแบบโปร่งแสง 40%
+        box.style.backgroundColor = 'rgba(249, 250, 251, 0.4)'; 
+        // (ตัวเลือกเสริม) ใส่เบลอนิดๆ ให้ลายน้ำดูละมุนขึ้นเมื่อมองทะลุกล่อง
+        box.style.backdropFilter = 'blur(1px)'; 
+    });
+
+    // 3. สร้าง Element ลายน้ำ
+    const watermarkText = `${studentName} (${studentId}) `;
+    const watermarkDiv = document.createElement('div');
+    
+    watermarkDiv.id = 'security-watermark';
+    watermarkDiv.style.position = 'absolute';
+    watermarkDiv.style.top = '-20%';     
+    watermarkDiv.style.left = '-20%';
+    watermarkDiv.style.width = '140%';
+    watermarkDiv.style.height = '140%';
+    watermarkDiv.style.pointerEvents = 'none'; 
+    // ปรับความเข้มขึ้นนิดนึง (0.06) เพื่อให้เวลาทะลุกล่องโปร่งแสงขึ้นมาแล้วยังพอมองเห็น
+    watermarkDiv.style.opacity = '0.06'; 
+    watermarkDiv.style.display = 'flex';
+    watermarkDiv.style.flexWrap = 'wrap';
+    watermarkDiv.style.alignContent = 'flex-start';
+    watermarkDiv.style.transform = 'rotate(-25deg)'; 
+    watermarkDiv.style.userSelect = 'none'; 
+    
+    // สร้างข้อความวนลูป
+    let content = '';
+    for (let i = 0; i < 50; i++) { 
+        content += `<span style="padding: 10px; font-size: 14px; font-weight: bold; white-space: nowrap;">${watermarkText}</span>`;
+    }
+    watermarkDiv.innerHTML = content;
+    
+    // 4. นำลายน้ำไปใส่ในกรอบสีขาวเป็นชั้นล่างสุด
+    targetBox.insertBefore(watermarkDiv, targetBox.firstChild);
+
+    // 5. ดันข้อมูลอื่นๆ ให้ลอยอยู่เหนือลายน้ำ
+    Array.from(targetBox.children).forEach(child => {
+        if (child.id !== 'security-watermark') {
+            child.style.position = 'relative';
+            child.style.zIndex = '10';
+        }
+    });
+}
     </script>
 </body>
 </html>
